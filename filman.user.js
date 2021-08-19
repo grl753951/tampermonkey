@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Filman.cc
 // @namespace    http://tampermonkey.net/
-// @version      0.9
+// @version      0.11
 // @description  Filman script
 // @author       You
 // @match        https://filman.cc/*
