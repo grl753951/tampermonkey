@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Filman.cc
 // @namespace    http://tampermonkey.net/
-// @version      0.8
+// @version      0.9
 // @description  Filman script
 // @author       You
 // @match        https://filman.cc/*
@@ -9,43 +9,59 @@
 // @run-at       document-start
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
-    function ready() {
-        if (window.opener) {
-            const filman = document.querySelector(".filman");
-            if(filman){
-                window.opener.postMessage("loaded", "*");
-            }
-        }
 
-        document.querySelectorAll("#color-switch,#cookies,#fb-root,#belt,header,.filman,center,.description,#single-poster,div.clearfix,thead > tr.version, #wrapper > .container, .fa-sort, #search").forEach(function(item) {
+    function doIfExists(query, func) {
+        const elems = document.querySelector(query);
+        if (elems) {
+            func(elems);
+        }
+    }
+
+    function blockSiteJS(e) {
+        doIfExists('.filman', () => {
+            e.stopPropagation();
+            e.preventDefault();
+            e.target.parentNode.removeChild(e.target);
+        });
+    }
+
+    function removeElements() {
+        const elementsToRemove = [
+            "#color-switch",
+            "#cookies",
+            "#fb-root",
+            "#belt",
+            "header",
+            ".filman",
+            "center",
+            ".description",
+            "#single-poster",
+            "div.clearfix",
+            "thead > tr.version",
+            "#wrapper > .container",
+            ".fa-sort",
+            "#search"
+        ];
+        document.querySelectorAll(elementsToRemove.join(",")).forEach(function (item) {
             item.remove();
         });
-        const el = document.querySelector("#item-info");
-        if(el){
-            el.classList = [];
-        }
-        const el1 = document.querySelector("#link-list");
-        if(el1){
-            el1.setAttribute("style", "");
-        }
-        const body = document.querySelector("body");
-        if(body){
-            body.setAttribute("style", "padding: 2em");
-        }
-        document.querySelectorAll("a.select-version").forEach(function(item) {
+    }
+
+    function addFiltering() {
+        document.querySelectorAll("a.select-version").forEach(function (item) {
             item.removeAttribute("href");
             item.setAttribute("style", "cursor: pointer");
 
-            item.addEventListener('click', function(){
+            item.addEventListener('click', function () {
                 const selectedVersion = item.textContent;
-                document.querySelectorAll("tr.version").forEach(function(item) {
+                document.querySelectorAll("tr.version").forEach(function (item) {
                     item.setAttribute("style", "");
                 });
                 if (selectedVersion !== 'Wszystkie') {
-                    document.querySelectorAll("tr.version").forEach(function(item) {
-                        if(selectedVersion === 'Lektor') {
+                    document.querySelectorAll("tr.version").forEach(function (item) {
+                        if (selectedVersion === 'Lektor') {
                             if (!item.textContent.includes(selectedVersion) || item.textContent.includes('Lektor_IVO')) {
                                 item.setAttribute("style", "display: none");
                             }
@@ -56,13 +72,15 @@
                 }
             });
         });
+    }
 
-        document.querySelectorAll(".link-to-video > a").forEach(function(item) {
+    function extractLinkData() {
+        document.querySelectorAll(".link-to-video > a").forEach(function (item) {
             item.removeAttribute("href");
             item.removeAttribute("target");
             item.setAttribute("style", "cursor: pointer");
 
-            item.addEventListener('click', function(){
+            item.addEventListener('click', function () {
                 const url = JSON.parse(atob(item.getAttribute('data-iframe'))).src;
                 const path = location.pathname.split('/');
                 var name = path[2];
@@ -79,13 +97,21 @@
             }, false);
         });
     }
-    document.addEventListener('beforescriptexecute', function(e){
-        const loaded = document.getElementsByClassName('filman').length > 0;
-        if(loaded){
-            e.stopPropagation ();
-            e.preventDefault ();
-            e.target.parentNode.removeChild (e.target);
+
+    function documentLoaded() {
+        if (window.opener) {
+            doIfExists('.filman', () => window.opener.postMessage("loaded", "*"));
         }
-    }, true);
-    document.addEventListener("DOMContentLoaded", ready);
+        removeElements();
+
+        doIfExists('#item-info', el => el.classList = []);
+        doIfExists('#link-list', el => el.setAttribute("style", ""));
+        doIfExists('body', el => el.setAttribute("style", "padding: 2em"));
+
+        addFiltering();
+        extractLinkData();
+    }
+
+    document.addEventListener('beforescriptexecute', blockSiteJS, true);
+    document.addEventListener("DOMContentLoaded", documentLoaded);
 })();
