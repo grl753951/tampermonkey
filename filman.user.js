@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Filman.cc
 // @namespace    http://tampermonkey.net/
-// @version      0.11
+// @version      0.12
 // @description  Filman script
 // @author       You
 // @match        https://filman.cc/*
@@ -38,11 +38,10 @@
             "center",
             ".description",
             "#single-poster",
-            "div.clearfix",
+            "div.clearfix  > div.text-right",
             "thead > tr.version",
             "#wrapper > .container",
-            ".fa-sort",
-            "#search"
+            ".fa-sort"
         ];
         document.querySelectorAll(elementsToRemove.join(",")).forEach(function (item) {
             item.remove();
@@ -81,27 +80,27 @@
             item.setAttribute("style", "cursor: pointer");
 
             item.addEventListener('click', function () {
-                const url = JSON.parse(atob(item.getAttribute('data-iframe'))).src;
-                const path = location.pathname.split('/');
-                var name = path[2];
-                var sname = '';
-                if (path[1] === 'serial-online') {
-                    sname = name;
-                    name = document.querySelector('h3').textContent;
+                if (window.opener) {
+                    const url = JSON.parse(atob(item.getAttribute('data-iframe'))).src;
+                    const path = location.pathname.split('/');
+                    var name = path[2];
+                    var sname = '';
+                    if (path[1] === 'serial-online') {
+                        sname = name;
+                        name = document.querySelector('h3').textContent;
+                    }
+                    var msg = url + "|" + name;
+                    if (sname) {
+                        msg += "|" + sname;
+                    }
+                    window.opener.postMessage(msg, "*");
                 }
-                var msg = url + "|" + name;
-                if (sname) {
-                    msg += "|" + sname;
-                }
-                window.parent.postMessage(msg, "*");
+
             }, false);
         });
     }
 
     function documentLoaded() {
-        if (window.opener) {
-            doIfExists('.filman', () => window.opener.postMessage("loaded", "*"));
-        }
         removeElements();
 
         doIfExists('#item-info', el => el.classList = []);
