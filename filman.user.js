@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Filman.cc
 // @namespace    http://tampermonkey.net/
-// @version      0.12
+// @version      0.13
 // @description  Filman script
 // @author       You
 // @match        https://filman.cc/*
@@ -60,11 +60,10 @@
                 });
                 if (selectedVersion !== 'Wszystkie') {
                     document.querySelectorAll("tr.version").forEach(function (item) {
-                        if (selectedVersion === 'Lektor') {
-                            if (!item.textContent.includes(selectedVersion) || item.textContent.includes('Lektor_IVO')) {
-                                item.setAttribute("style", "display: none");
-                            }
-                        } else if (!item.textContent.includes(selectedVersion)) {
+                        if (!item.textContent.includes(selectedVersion) ||
+                            (selectedVersion === 'Lektor' && item.textContent.includes('Lektor_IVO')) ||
+                            (selectedVersion === 'Napisy' && item.textContent.includes('Napisy_Tansl'))
+                        ) {
                             item.setAttribute("style", "display: none");
                         }
                     });
