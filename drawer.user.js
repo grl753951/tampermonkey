@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Drawer
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  Drawer links
 // @author       You
 // @match        *://*/*
@@ -45,6 +45,8 @@ GM_addStyle(`
     transition: transform 0.3s;
     will-change: transform;
     font-size: large;
+    background-color: white;
+    color: black;
     display: flex;
     flex-direction: column;
     -webkit-transform: translateX(103%);
