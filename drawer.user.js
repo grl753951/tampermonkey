@@ -4,12 +4,13 @@
 // @version      0.1
 // @description  Drawer links
 // @author       You
-// @match        *
-// @grant        GM_addStyle
-// @run-at       document-start
-// ==/UserScript==
+-(
+  // @match        *://*/*
+  // @grant        GM_addStyle
+  // @run-at       document-start
+  // ==/UserScript==
 
-GM_addStyle(`
+  GM_addStyle(`
   .drawer {
     display: none;
   }
@@ -104,7 +105,8 @@ GM_addStyle(`
       cursor: pointer;
   }
 
-`);
+`)
+);
 
 const drawerHTML = `<section class="drawer drawer--left" id="drawer-name" data-drawer-target>
 <div class="drawer__overlay" data-drawer-close tabindex="-1"></div>
@@ -122,8 +124,6 @@ const drawerHTML = `<section class="drawer drawer--left" id="drawer-name" data-d
 
 (function () {
   "use strict";
-
-  
 
   function drawer() {
     if (!Element.prototype.closest) {
