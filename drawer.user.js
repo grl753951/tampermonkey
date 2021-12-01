@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Drawer
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Drawer links
 // @author       You
 // @match        *://*/*
@@ -121,9 +121,7 @@ const drawerHTML = `<section class="drawer drawer--left" id="drawer-name" data-d
 </section>`;
 
 (function () {
-  "use strict";
-
-  
+  "use strict";  
 
   function drawer() {
     if (!Element.prototype.closest) {
