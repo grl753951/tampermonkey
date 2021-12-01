@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Filman.cc
 // @namespace    http://tampermonkey.net/
-// @version      0.13
+// @version      0.14
 // @description  Filman script
 // @author       You
 // @match        https://filman.cc/*
@@ -17,14 +17,6 @@
         if (elems) {
             func(elems);
         }
-    }
-
-    function blockSiteJS(e) {
-        doIfExists('.filman', () => {
-            e.stopPropagation();
-            e.preventDefault();
-            e.target.parentNode.removeChild(e.target);
-        });
     }
 
     function removeElements() {
@@ -79,22 +71,8 @@
             item.setAttribute("style", "cursor: pointer");
 
             item.addEventListener('click', function () {
-                if (window.opener) {
-                    const url = JSON.parse(atob(item.getAttribute('data-iframe'))).src;
-                    const path = location.pathname.split('/');
-                    var name = path[2];
-                    var sname = '';
-                    if (path[1] === 'serial-online') {
-                        sname = name;
-                        name = document.querySelector('h3').textContent;
-                    }
-                    var msg = url + "|" + name;
-                    if (sname) {
-                        msg += "|" + sname;
-                    }
-                    window.opener.postMessage(msg, "*");
-                }
-
+                const url = JSON.parse(atob(item.getAttribute('data-iframe'))).src;
+                window.open(url);
             }, false);
         });
     }
@@ -110,6 +88,5 @@
         extractLinkData();
     }
 
-    document.addEventListener('beforescriptexecute', blockSiteJS, true);
     document.addEventListener("DOMContentLoaded", documentLoaded);
 })();
