@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Drawer
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  Drawer links
 // @author       You
-// @match        *://*/*
+// @match        https://filman.cc/*
 // @grant        GM_addStyle
 // @run-at       document-start
 // ==/UserScript==
