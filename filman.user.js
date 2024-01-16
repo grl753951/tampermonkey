@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Filman.cc
 // @namespace    http://tampermonkey.net/
-// @version      0.16
+// @version      0.17
 // @description  Filman script
 // @author       You
 // @match        https://filman.cc/*
@@ -71,8 +71,8 @@
                 text: 'Watch a video!',
                 url: url,
             })
-                .then(() => window.open(url))
-                .catch((error) => alert('Error sharing', error));
+                .then(() => console.log('Successful share'))
+                .catch((error) => window.open(url));
         } else {
             window.open(url);
             console.log('Share not supported on this browser, do it the old way.');
