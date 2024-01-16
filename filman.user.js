@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Filman.cc
 // @namespace    http://tampermonkey.net/
-// @version      0.15
+// @version      0.16
 // @description  Filman script
 // @author       You
 // @match        https://filman.cc/*
@@ -64,44 +64,19 @@
         });
     }
 
-    function sendToKodi(streamUrl) {
+    function sendToKodi(url) {
         if (navigator.share) {
             navigator.share({
                 title: 'Stream URL',
                 text: 'Watch a video!',
-                url: streamUrl,
+                url: url,
             })
-                .then(() => console.log('Successful share'))
-                .catch((error) => console.log('Error sharing', error));
+                .then(() => window.open(url))
+                .catch((error) => alert('Error sharing', error));
         } else {
+            window.open(url);
             console.log('Share not supported on this browser, do it the old way.');
         }
-
-        //         try {
-        //             const body = {
-        //                 jsonrpc: '2.0',
-        //                 method: 'Player.Open',
-        //                 id: 0,
-        //                 params: {
-        //                     item: {
-        //                         file: 'plugin://plugin.video.sendtokodi/?' + streamUrl
-        //                     }
-        //                 }
-        //             };
-
-        //             const Http = new XMLHttpRequest();
-        //             const url='http://192.168.1.111:8080/jsonrpc';
-        //             Http.open("POST", url, true);
-        //             Http.withCredentials = true;
-        //             Http.setRequestHeader('Accept', 'application/json');
-        //             Http.setRequestHeader('Content-Type', 'application/json');
-        //             Http.setRequestHeader('Authorization', 'Basic ' + btoa('kodi:kodi'));
-        //             Http.send(JSON.stringify(body));
-        //         }
-        //         catch (error) {
-        //             console.log(error)
-        //             alert(error.message);
-        //         }
     }
 
     function extractLinkData() {
@@ -117,7 +92,6 @@
                 } else {
                     url = atob(item.getAttribute('href'));
                 }
-                window.open(url);
                 sendToKodi(url);
             }, false);
         });
