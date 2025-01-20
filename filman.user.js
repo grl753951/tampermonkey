@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Filman.cc
 // @namespace    http://tampermonkey.net/
-// @version      0.17
+// @version      0.18
 // @description  Filman script
 // @author       You
 // @match        https://filman.cc/*
@@ -13,14 +13,15 @@
     'use strict';
 
     function doIfExists(query, func) {
-        const elems = document.querySelector(query);
+        const elems = document.querySelectorAll(query);
         if (elems) {
-            func(elems);
+            elems.forEach(elem => func(elem));
         }
     }
 
     function removeElements() {
         const elementsToRemove = [
+            ".alert-info",
             "#color-switch",
             "#cookies",
             "#fb-root",
@@ -100,9 +101,16 @@
     function documentLoaded() {
         removeElements();
 
-        doIfExists('#item-info', el => el.classList = []);
+        doIfExists('#item-info', el => (el.classList = []));
         doIfExists('#link-list', el => el.setAttribute("style", ""));
         doIfExists('body', el => el.setAttribute("style", "padding: 2em"));
+        doIfExists('input', el => el.setAttribute("style", "width: 100%"));
+        doIfExists('.col-sm-9', el => (el.classList = ['col-sm-12']));
+        doIfExists('.tab-content', el => {
+            const ii = document.getElementById('item-info');
+            ii.replaceChild(document.querySelector('.tab-content'), ii.firstElementChild);
+        });
+        //doIfExists('#item-list', el => el.parentElement.remove());
 
         addFiltering();
         extractLinkData();
